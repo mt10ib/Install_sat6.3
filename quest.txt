@@ -1,0 +1,16 @@
+Sat capsule - use only as a content node
+-----------
+Depending upon the feature Red Hat Satellite Capsule can be used in 2 ways:
+1). Red Hat Satellite Capsule Server as a Content Node ------> provides only feature A
+2). Red HatSatellite Capsule Server as a Content Node with Smart Proxy ------> provides feature A & B
+
+
+
+RH Satellite is a system management solutions that lets you deploy, configure and manitain your systems across physical, virtual and cloud enviroment.
+RH Satellite Server synchronizes the content from Red Hat Customer Portal and provides functionally such as life cycle management, ACL, subs management, as well as GUI, CLI and API access
+RH Satellite Capsule provides content federation and run localized services to discover, provision, control and configure hosts. 
+
+
+I am just trying to understand the purpose of Satellite Capsule Server. According to https://www.redhat.com/en/technologies/management/satellite/faq, The Red Hat Satellite Capsule Server is used to extend the management of Red Hat Satellite to remote datacenters. Typically a Red Hat Satellite Capsule Server instance is deployed in each remote datacenter to federate services like provisioning so they can be performed locally.
+
+dipe-joha-kola-keka

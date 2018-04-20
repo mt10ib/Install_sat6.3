@@ -18,7 +18,6 @@
         state: present
         username: "{{ rh_username }}"
         password: "{{ rh_password }}"
-        # pool: '^Red Hat Sat/ellite$' 
       when: "'not registered' in subscribed.stdout"
 
     # Get pool ID and attahch, if no pool pool id returned fail
@@ -27,7 +26,6 @@
       register: rh_poolid
 
     - debug:
-        var: rh_poolid.stdout
         var: rh_poolid.stdout
 
     - name: Fail if no pool id is found 
@@ -69,6 +67,24 @@
         name: satellite
         state: latest
 
+    #Remove ntp, install chrony
+    - name: remove ntp
+      yum:
+        name: "ntp,ntpdate"
+        state: absent
+
+    - name: install chrony
+      yum:
+        name: "chrony"
+        state: present
+
+    - name: start chrony
+      systemd:
+        name: chronyd
+        state: started
+        enabled: yes
+
+
     # - name: Copy satellite answers file to target
     #   copy:
     #     src: ../templates/satellite-answers.yaml
@@ -90,13 +106,21 @@
         backup: yes 
 
 
+    # Install Satellite 
     - name: Install satellite
       command: /usr/sbin/satellite-installer --scenario "{{ satellite_scenario }}" --foreman-admin-username "{{ foreman_username }}" --foreman-admin-password "{{ foreman_password }}"
        
-
     - name: Ensure firewalld is stopped
       systemd: name=firewalld state=stopped
 
     - name: Ensure firewalld is disabled
       systemd: name=firewalld enabled=no
     
+
+    - name: Copy manifest to the Satellite Server
+      copy:
+        src: /home/mthavarajah/Downloads/manifest_mohan-satellite_20180419T232532Z.zip
+        dest: ~/.
+
+    - name: Upload manifest
+      command: hammer subscription upload -- file ~/manifest_mohan-satellite_20180419T232532Z.zip -- organization "{{ organization }}"

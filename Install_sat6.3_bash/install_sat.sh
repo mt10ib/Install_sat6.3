@@ -1,6 +1,6 @@
 #!/bin/bash
 
-subscription-manager register --username <username> --password <password>
+#subscription-manager register --username <username> --password <password>
 
 Pool_ID=$(subscription-manager list --available --matches "Red Hat Satellite" | grep 'Pool ID' | awk 'FNR == 1 {print$3}')
 
@@ -10,12 +10,23 @@ subscription-manager repos --disable "*"
 
 subscription-manager repos --enable rhel-7-server-rpms --enable rhel-server-rhscl-7-rpms --enable rhel-7-server-satellite-6.3-rpms
 
+subscription-manager release --unset
+
 # Install satellite installer
 yum clean all
 
 yum -y update
 
 yum -y install satellite  
+
+#Remove ntp, install chrony
+yum -y remove ntp ntpdate
+
+yum install chrony 
+
+systemctl start chronyd && systemctl enable chronyd
+
+
 
 # copy local satellite-answers.yml, overwrite it
 #cp /home/mthavarajah/Desktop/Arctiq/Projects/Install_sat6/satellite-answers.yaml /etc/foreman-installer/scenarios.d/
@@ -27,6 +38,7 @@ satellite-installer -v --scenario satellite --foreman-admin-username "admin" --f
 
 # Disable firewall
 systemctl stop firewalld.service && systemctl disable firewalld.service
+
 
 
 
