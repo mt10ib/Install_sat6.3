@@ -25,6 +25,10 @@
       shell: /usr/bin/subscription-manager list --available --matches "Red Hat Satellite" | grep 'Pool ID' | awk 'FNR == 1 {print$3}'
       register: rh_poolid
 
+    - name: Consumed pool id
+      shell: /usr/bin/subscription-manager list --consumed
+      register: consumed_poolid
+
     - debug:
         var: rh_poolid.stdout
 
@@ -35,7 +39,9 @@
 
     - name: attach to pool 
       command: subscription-manager attach --pool="{{ rh_poolid.stdout }}"
-      register: register_result
+      when: consumed_poolid.stdout == "No consumed subscription pools were found."
+      # register: register_result
+
 
     # Disalbe all repos and enalbe the the pkgs listed below
     - name: Disable all repos
